@@ -5,6 +5,8 @@ import nilearn.image
 import glob
 import warnings
 from scipy.spatial.transform import Rotation as R
+from matplotlib import pyplot as plt
+import seaborn as sns
 import subprocess
 import tempfile
 import osfclient
@@ -23,7 +25,6 @@ def sys_cmd(cmd, print_output=True, print_command=True):
     result_stderr = result.stderr
     
     result_stdout_str = result_stdout.decode('UTF-8')[:-1]
-    print("RESULT_STDERR", result_stderr)
     
     if print_output:
         print(result_stdout_str, end="")
@@ -297,26 +298,20 @@ def tgv_qsm_me(mask_file, pha_files, TEs, B0_str, eros, out_dir=None):
     qsm_files = []
     for i in range(len(pha_files)):
         out_file = fname_append(pha_files[i], "_qsm_000")
-        qsm_files.append(out_file)
-        if not out_dir and os.path.exists(out_file): continue
-        if out_dir and os.path.exists(os.path.join(out_dir, get_fname(qsm_files[i]))): continue
-        sys_cmd(tgv_qsm_cmd.format(
-            TE=TEs[i],
-            B0_str=B0_str,
-            eros=eros,
-            mask=mask_file,
-            phase=pha_files[i]
-        ))
-
-    # move qsm files
-    qsm_files.sort()
-    if out_dir:
-        for i in range(len(qsm_files)):
-            new_qsm_fname = os.path.join(out_dir, get_fname(qsm_files[i]))
-            qsm_files[i] = new_qsm_fname
-            if not os.path.exists(new_qsm_fname):
-                move(qsm_files[i], new_qsm_fname)
-
+        out_file_final = fname_append(pha_files[i], "_qsm_000", out_dir)
+        if not os.path.exists(out_file_final):
+            if not os.path.exists(out_file):
+                sys_cmd(tgv_qsm_cmd.format(
+                    TE=TEs[i],
+                    B0_str=B0_str,
+                    eros=eros,
+                    mask=mask_file,
+                    phase=pha_files[i]
+                ))
+            else:
+                move(out_file, out_file_final)
+        qsm_files.append(out_file_final)
+        
     # averaging
     qsm_average_fname = fname_append(qsm_files[0], "_average")
     if os.path.exists(qsm_average_fname): return qsm_average_fname
@@ -386,3 +381,13 @@ def nextqsm_me(mask_file, pha_files, TEs, B0_str, eros, out_dir=None):
     if os.path.exists(qsm_average_fname): return qsm_average_fname
     return nonzero_average(qsm_files, qsm_average_fname)
 
+def display_nii(nii_path, title=None, slc=None, **kwargs):
+    data = nib.load(nii_path).get_fdata()
+    slc = slc or int(data.shape[0]/2)
+    plt.figure()
+    plt.axis('off')
+    plt.imshow(np.rot90(data[slc,:,:]), **kwargs)
+    if title: plt.title(title)
+    plt.show()
+    
+    

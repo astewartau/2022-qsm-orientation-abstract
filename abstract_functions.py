@@ -192,12 +192,12 @@ def resample_to_axial(mag_files, pha_files, out_dir=None):
 
     return mag_files_new, pha_files_new
 
-def resample_like(in_file, in_like_file, out_dir=None):
+def resample_like(in_file, in_like_file, out_dir=None, interpolation='continuous'):
     out_file = fname_append(in_file, "_resample-like", out_dir if out_dir else get_dir(in_file))
     if os.path.exists(out_file): return out_file
     in_nii = nib.load(in_file)
     in_like_nii = nib.load(in_like_file)
-    in_nii_resampled = nilearn.image.resample_img(in_nii, target_affine=in_like_nii.affine, target_shape=np.array(in_like_nii.header.get_data_shape()), interpolation='continuous')
+    in_nii_resampled = nilearn.image.resample_img(in_nii, target_affine=in_like_nii.affine, target_shape=np.array(in_like_nii.header.get_data_shape()), interpolation=interpolation)
     nib.save(in_nii_resampled, out_file)
     return out_file
 

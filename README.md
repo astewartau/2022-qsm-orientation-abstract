@@ -6,6 +6,8 @@ Ashley Stewart<sup>1</sup>, Korbinian Eckstein<sup>1</sup>, Thanh Thuy Dao<sup>1
 
 <sup>2</sup>Siemens Healthineers Pty Ltd., Brisbane, Australia
 
+**[Click for slides](https://docs.google.com/presentation/d/1cu3xDT_XovuYGfnAhC3DuX1xvhukP1SpdOcmNb8rIqA/edit?usp=sharing)**
+
 ## Introduction
 
 In an MRI acquisition, oblique slice orientations are often used to visualise clinically relevant anatomical regions and optimise the scanning field of view and duration. In Quantitative Susceptibility Mapping (QSM), which aims to estimate the magnetic susceptibility of tissues, many emerging algorithms assume that the main magnetic field is oriented axially through the imaging volume, which is not the case for oblique acquisitions. This assumption prevents accurate susceptibility quantification and introduces pervasive artefacts in susceptibility maps, limiting the practical uptake of the method. Recent work has identified resampling slices to an axial orientation prior to QSM processing as a solution<sup>1</sup>. In this work, we implement this rotate-and-resample method to enable automated processing of oblique acquisitions and publish it as part of the QSMxT software toolbox<sup>2,3</sup>. We test the implementation in silico using the QSM challenge head phantom, measuring differences in the effect of orientation on susceptibility quantification across brain regions, identifying that small sources such as veins remain challenging to quantify accurately after resampling.
